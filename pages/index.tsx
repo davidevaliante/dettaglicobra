@@ -1,11 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import axios from "axios";
-import {
-  configuration,
-  off,
-  onOffConfig,
-  redirectPage,
-} from "../configuration";
+import { configuration } from "../configuration";
 import AquaClient from "../graphql/aquaClient";
 import { Streamer, StreamerBonus } from "../models/streamer";
 import Wrapper from "../components/Layouts/Wrapper";
@@ -14,7 +9,6 @@ import VideoDiscalimer from "../components/VideoDisclaimer/VideoDisclaimer";
 import FullPageLoader from "../components/FullPageLoader";
 import Container from "../components/Layouts/Container";
 import lowerCase from "lodash/lowerCase";
-import Router from "next/router";
 
 interface Props {
   streamerData: Streamer;
@@ -49,7 +43,7 @@ const index: FunctionComponent<Props> = ({ streamerData }) => {
     const { active } = offData.data;
 
     if (!active) {
-      window.location.replace(`https://dettagli.milicompare.info/about`);
+      window.location.replace(`/about`);
     } else {
       const userCountryRequest = await axios.get(configuration.geoApi);
       const countryCode = lowerCase(userCountryRequest.data.country_code2);

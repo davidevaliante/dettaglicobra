@@ -1,53 +1,62 @@
-import { onOffConfig, redirectPage } from "../configuration";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import axios from "axios";
 
-const Config: FunctionComponent = (props: any) => {
-  const [onOff, setOnOff] = useState(props.active);
+const Config: FunctionComponent = () => {
+  const [status, setStatus] = useState<"active" | "inactive">();
+
+  useEffect(() => {
+    getCurrentStatus();
+  }, []);
+
+  const getCurrentStatus = async () => {
+    const offData = await axios.get(
+      "https://spike-2481d.firebaseio.com/Spare/Cobra.json",
+    );
+    const { active } = offData.data;
+
+    active ? setStatus("active") : setStatus("inactive");
+  };
 
   const handleSwitch = async () => {
-    await axios.put(`https://spike-2481d.firebaseio.com/Spare/Cobra.json`, {
-      active: !onOff,
-    });
-    setOnOff(!onOff);
+    const payload = status === "active"
+      ? {
+        active: false,
+      }
+      : {
+        active: true,
+      };
+    const offData = await axios.put(
+      "https://spike-2481d.firebaseio.com/Spare/Cobra.json",
+      payload,
+    );
+
+    console.log(offData.status);
+
+    if (offData.status == 200) {
+      console.log("yeps");
+      setStatus(payload.active == true ? "inactive" : "active");
+    }
+
+    setStatus(status === "active" ? "inactive" : "active");
   };
 
   return (
     <div>
-      <div
-        style={{
-          margin: "2rem",
-        }}
-      >
-        <h1>Status</h1>
-        <div>
-          <div
-            style={{
-              margin: "1rem 0rem",
-            }}
-          >
-            <p style={{ display: "inline", marginRight: "1rem" }}>
-              {onOff ? "Attivo" : "Non Attivo"}
-            </p>
-            <button onClick={handleSwitch}>Switch</button>
-          </div>
-        </div>
+      <div style={{ margin: "1rem" }}>
+        Status : {status}
+
+        <button
+          onClick={handleSwitch}
+          style={{
+            display: "block",
+            marginTop: "1rem",
+          }}
+        >
+          {`Switch to ${status === "active" ? "inactive" : "active"}`}
+        </button>
       </div>
     </div>
   );
-};
-
-export const getServerSideProps = async () => {
-  const offData = await axios.get(
-    "https://spike-2481d.firebaseio.com/Spare/Cobra.json",
-  );
-  const { active } = offData.data;
-
-  return {
-    props: {
-      active,
-    },
-  };
 };
 
 export default Config;

@@ -1,29 +1,12 @@
 import React, { FunctionComponent, useContext, useEffect } from "react";
 import AquaClient from "../../../graphql/aquaClient";
-import {
-  BONUSES_BY_NAME,
-  STREAMER_BY_ID,
-} from "../../../graphql/queries/bonus";
-import { Bonus } from "../../../graphql/schema";
-import styled from "styled-components";
-import { tablet } from "../../../components/Responsive/Breakpoints";
-import { initializeAnalytics } from "../../../analytics/base";
-import { cookieContext } from "../../../context/CookieContext";
-import CookieDisclaimer from "../../../components/CookieDisclaimer/CookieDisclaimer";
 import VideoDiscalimer from "../../../components/VideoDisclaimer/VideoDisclaimer";
 import BonusStripe from "../../../components/BonusStripe/BonusStripe";
 import { Streamer, StreamerBonus } from "../../../models/streamer";
-import {
-  configuration,
-  off,
-  onOffConfig,
-  redirectPage,
-} from "../../../configuration";
+import { configuration } from "../../../configuration";
 import axios from "axios";
-import Router from "next/router";
 import lowerCase from "lodash/lowerCase";
 import { useState } from "react";
-import { CircularProgress } from "@material-ui/core";
 import FullPageLoader from "../../../components/FullPageLoader";
 import Wrapper from "../../../components/Layouts/Wrapper";
 import Container from "../../../components/Layouts/Container";
@@ -56,7 +39,7 @@ const Compare: FunctionComponent<Props> = ({ streamerData, bonusToShow }) => {
     const { active } = offData.data;
 
     if (!active) {
-      window.location.replace(`https://dettagli.milicompare.info/about`);
+      window.location.replace(`/about`);
     } else {
       const userCountryRequest = await axios.get(configuration.geoApi);
       const countryCode = lowerCase(userCountryRequest.data.country_code2);
