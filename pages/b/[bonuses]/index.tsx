@@ -89,9 +89,19 @@ const Compare: FunctionComponent<Props> = ({ streamerData, bonusToShow }) => {
   }, []);
 
   const geoLocate = async () => {
-    const userCountryRequest = await axios.get(configuration.geoApi);
-    const countryCode = lowerCase(userCountryRequest.data.country_code2);
-    setCountry(countryCode);
+    const offData = await axios.get(
+      "https://spike-2481d.firebaseio.com/Spare/Cobra.json"
+    );
+    const { active } = offData.data;
+
+    if (!active) {
+      window.location.replace(`/about`);
+    } else {
+      const userCountryRequest = await axios.get(configuration.geoApi);
+      const countryCode = lowerCase(userCountryRequest.data.country_code2);
+
+      if (countryCode) setCountry(countryCode);
+    }
   };
 
   const getBonusList = async () => {
